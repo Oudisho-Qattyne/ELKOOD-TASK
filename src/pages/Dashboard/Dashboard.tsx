@@ -7,8 +7,8 @@ import { useEffect } from 'react';
 export default function Dashboard() {
     const updateReservation = useReservationStore(state => state.updateReservation);
     useEffect(() => {
+        localStorage.removeItem('reservations-storage')
     } , [])
-    localStorage.removeItem('reservations-storage')
     return (
         <DndContext onDragEnd={handleDragEnd}  >
             <div className='relative w-full p-5 flex-wrap grid grid-cols-{3} gap-3'  >
