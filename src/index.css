@@ -1,0 +1,50 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+@theme{
+  --color-primary: #007bff; 
+  --color-secondary: #9198a1; 
+  --color-custom-gray: #212830; 
+  --color-custom-gray-hover: #262c36; 
+  --color-custom-gray-border: #3d444d;
+  --color-accent: #ff4500;
+  --color-dark:#0d1117;
+  --color-dark-foreground:#151b23;
+  --color-leight: #F4F4F4 ;
+  --color-leight-foreground: #ffffff;
+  --color-custom-green : #238636;
+  --color-custom-green-hover : #29903b;
+  --color-bug-red : #32161e;
+  --color-bug-red-text : #fe9b8c;
+  --color-developertool-yellow : #3e3a1e;
+  --color-developertool-yellow-text : #e3ca04;
+  --color-custom-purple : #ab7df8;
+
+  --color-background: light-dark(#ffffff, #0d1117);
+  --color-foreground: light-dark(#0f172a, #f8fafc);
+}
+
+:root {
+  --background-color: #FAFAFA ; 
+  --text-color: #000000;
+
+
+}
+
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+ 
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
