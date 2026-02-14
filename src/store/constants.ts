@@ -1,11 +1,11 @@
 import { FaRegBookmark } from "react-icons/fa";
 import type { Reservation } from "./store";
-import { CgSandClock } from "react-Icons/cg";
 
 import { FaPersonWalkingArrowRight } from "react-icons/fa6";
 import { FiAlertTriangle } from "react-icons/fi";
 import { LiaTeethOpenSolid, LiaTeethSolid } from "react-icons/lia";
 import { MdOutlineCancel } from "react-icons/md";
+import { LuTimerReset } from "react-icons/lu";
 export const BloodTypes = [
     {
         id: '0',
@@ -85,7 +85,7 @@ export const ReservationStatuses = [
         item: 'waiting',
         value:'waiting',
         color: '#F59E0B',
-        Icon:CgSandClock ,
+        Icon:LuTimerReset  ,
         render:true,
         next:'in-treatment',
         previous:'upcoming'
