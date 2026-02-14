@@ -1,6 +1,7 @@
+import { FaRegBookmark } from "react-icons/fa";
 import type { Reservation } from "./store";
 import { CgSandClock } from "react-Icons/cg";
-import { CiBookmark } from "react-icons/ci";
+
 import { FaPersonWalkingArrowRight } from "react-icons/fa6";
 import { FiAlertTriangle } from "react-icons/fi";
 import { LiaTeethOpenSolid, LiaTeethSolid } from "react-icons/lia";
@@ -64,7 +65,7 @@ export const ReservationStatuses = [
         item: 'Reservation Status',
         value:'',
         color: '#3B82F6',
-        Icon:CiBookmark ,
+        Icon:FaRegBookmark  ,
         render:false,
         next:'',
         previous:''
@@ -74,7 +75,7 @@ export const ReservationStatuses = [
         item: 'upcoming',
         value:'upcoming',
         color: '#3B82F6',
-        Icon:CiBookmark ,
+        Icon:FaRegBookmark  ,
         render:true,
         next:'waiting',
         previous:''
@@ -126,14 +127,14 @@ export const ReservationTypes = [
         id: '09',
         item: 'Reservation Type',
         value:'',
-        Icon:CiBookmark,
+        Icon:FaRegBookmark ,
         color: '#3B82F6' 
     },
     {
         id: '1',
         item: 'pre-booked',
         value:'pre-booked',
-        Icon:CiBookmark,
+        Icon:FaRegBookmark ,
         color: '#3B82F6' 
     },
     {
