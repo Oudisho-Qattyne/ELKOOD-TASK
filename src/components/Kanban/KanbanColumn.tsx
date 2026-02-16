@@ -3,16 +3,17 @@ import { useReservationStore, type Reservation, type ReservationStatus } from ".
 import { useEffect, useState } from "react";
 import KanbanResvation from "./KanbanResevation";
 import { BsArrowsFullscreen } from "react-icons/bs";
-import Select from "../input/Select";
 import { BloodTypes, ReservationSortFieldsKanban, ReservationTypes } from "../../store/constants";
 import { FaSortAmountDown } from "react-icons/fa";
 import { MdBloodtype } from "react-icons/md";
 import { CiBookmarkCheck } from "react-icons/ci";
+import Input from "../input";
 
 
 interface KanbanColumnProps {
     title: ReservationStatus;
     color: string;
+    date:string;
 
 }
 
@@ -22,7 +23,7 @@ interface Item {
     value:any
 }
 
-export default function KanbanColumn({ title, color = '#3d444d' }: KanbanColumnProps) {
+export default function KanbanColumn({ title, color = '#3d444d' , date }: KanbanColumnProps) {
     const [search , setSearch] = useState<string>("")
     const [sort , setSort] = useState<Item>()
     const [bloodType , setBloodType] = useState<Item>()
@@ -39,14 +40,16 @@ export default function KanbanColumn({ title, color = '#3d444d' }: KanbanColumnP
 
     const filterData = [
         {
-            placeholder:"Blood Type",
+            id:'1',
+            title:"Blood Type",
             value:bloodType,
             onChange : setBloodType,
             data:BloodTypes,
             icon:MdBloodtype
         },
         {
-            placeholder:"Reservation Type",
+            id:'2',
+            title:"Reservation Type",
             value:reservationType,
             onChange : setReservationType,
             data:ReservationTypes,
@@ -60,12 +63,13 @@ export default function KanbanColumn({ title, color = '#3d444d' }: KanbanColumnP
             filter: {
                 reservationStatus: title,
                 bloodType:bloodType?.value,
-                reservationType:reservationType?.value
+                reservationType:reservationType?.value,
+                reservationDate:date
             },
             sort:sort?.item,
             search:search
         }))
-    }, [reservations , search , sort , bloodType , reservationType])
+    }, [reservations , search , sort , bloodType , reservationType , date])
  
 
     return (
@@ -87,8 +91,8 @@ export default function KanbanColumn({ title, color = '#3d444d' }: KanbanColumnP
                     <div className="relative w-full flex flex-col  gap-3 ">
                         <input onChange={e => setSearch(e.target.value)} className='relative w-full p-2 border border-custom-gray-hover rounded-lg' type="search" placeholder="search" />
                         <div className="relative w-full flex flex-row flex-wrap gap-3">
-                        <Select icon={FaSortAmountDown } value={sort} onChange={setSort} data={ReservationSortFieldsKanban} placeholder="sort" />
-                        {filterData.map(f => <Select {...f}/>)}
+                        <Input id="select" type="select" icon={FaSortAmountDown } value={sort} onChange={setSort} data={ReservationSortFieldsKanban} title="sort" />
+                        {filterData.map(f => <Input type="select" {...f}/>)}
                         </div>
                         
                     </div>

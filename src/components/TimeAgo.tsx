@@ -3,82 +3,37 @@ import { useState, useEffect } from 'react';
 interface TimeAgoProps {
   date: string | Date;
   className?: string;
-  refreshInterval?: number; 
+  refreshInterval?: number;
 }
 
-const TimeAgo = ({ 
-  date, 
-  className = '', 
-  refreshInterval = 60000,
-}: TimeAgoProps) => {
-  const [displayText, setDisplayText] = useState('');
+const TimeAgo = ({ date, className = '' }: TimeAgoProps) => {
+  const [formattedDate, setFormattedDate] = useState('');
 
-  const formatDateTimeShort = (date: Date): string => {
-    const now = new Date();
-    const isToday = date.toDateString() === now.toDateString();
-    
-    const options: Intl.DateTimeFormatOptions = isToday
-      ? { hour: '2-digit', minute: '2-digit' }
-      : { 
-          day: '2-digit', 
-          month: '2-digit', 
-          year: 'numeric', 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        };
-    
-    return date.toLocaleString('en-US', options);
-  };
+  const formatDate = (inputDate: string | Date): string => {
+    const d = new Date(inputDate);
+    if (isNaN(d.getTime())) return 'Invalid date';
 
-  const calculateDisplay = (): string => {
-    const now = new Date();
-    const past = new Date(date);
-    const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
 
-    if (diffInSeconds < 0) {
-      return 'in the future';
-    }
+    let hours = d.getHours();
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const formattedHours = String(hours).padStart(2, '0');
 
-    
-    if (diffInSeconds < 3600) {
-      const intervals = [
-        { label: 'second', seconds: 1 },
-        { label: 'minute', seconds: 60 },
-      ];
-      
-      
-      for (const interval of intervals) {
-        const count = Math.floor(diffInSeconds / interval.seconds);
-        if (count >= 1) {
-          if (interval.seconds === 1) {
-            return `${count} second${count !== 1 ? 's' : ''} ago`;
-          } else {
-            return `${count} minute${count !== 1 ? 's' : ''} ago`;
-          }
-        }
-      }
-      return 'just now';
-    } else {
-      
-      return formatDateTimeShort(past);
-    }
+    return `${day}/${month}/${year} ${formattedHours}:${minutes} ${ampm}`;
   };
 
   useEffect(() => {
-    setDisplayText(calculateDisplay());
-
-    if (refreshInterval > 0) {
-      const intervalId = setInterval(() => {
-        setDisplayText(calculateDisplay());
-      }, refreshInterval);
-
-      return () => clearInterval(intervalId);
-    }
-  }, [date, refreshInterval]);
+    setFormattedDate(formatDate(date));
+  }, [date]);
 
   return (
     <span className={className} title={new Date(date).toLocaleString()}>
-      {displayText}
+      {formattedDate}
     </span>
   );
 };

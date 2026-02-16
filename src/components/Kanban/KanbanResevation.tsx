@@ -5,6 +5,7 @@ import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaCheckCircle } from "reac
 import TimeAgo from "../TimeAgo";
 import { MdOutlineCancel } from "react-icons/md";
 import { MdDragIndicator } from "react-icons/md";
+import { Link } from "react-router";
 
 
 export default function KanbanResvation(reservation: Reservation) {
@@ -31,19 +32,20 @@ export default function KanbanResvation(reservation: Reservation) {
             {reservationType &&
                 <div className="relative w-10 aspect-square flex justify-center items-center rounded-full border " style={{ borderColor: reservationType.color }}>
                     {
-                        
-                        reservationType.Icon({ color: reservationType.color, fontSize: '20px'   })
+
+                        reservationType.Icon({ color: reservationType.color, fontSize: '20px' })
                     }
                 </div>
             }
             <div className="relative  flex flex-1 justify-between items-center gap-1">
                 <div className="relative flex flex-col gap-1">
-
-                    <p className="relative text-xl hover:text-primary hover:underline duration-300 select-none cursor-pointer">
-                        {
-                            reservation.name
-                        }
-                    </p>
+                    <Link to={`reservations/${reservation.id}`}>
+                        <p className="relative text-xl hover:text-primary hover:underline duration-300 select-none cursor-pointer">
+                            {
+                                reservation.name
+                            }
+                        </p>
+                    </Link>
                     <p className="relative text-secondary">
                         <TimeAgo date={reservation.reservationDate} />
                     </p>

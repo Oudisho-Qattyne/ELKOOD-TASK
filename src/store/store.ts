@@ -30,137 +30,157 @@ export type SortReservationsBy =
     | 'name'
     | null;
 
-
-export interface Reservation {
-    id: string;
-    name: string;
-    phone: string;
-    bloodType: BloodType;
-    reservationType: ReservationType;
-    reservationStatus: ReservationStatus;
-    reservationDate: string;
-    entryTime: Date | null;
-    treatmentStart: Date | null;
-    treatmentEnd: Date | null;
-    createdAt: Date | null;
-
-}
-
-interface FilterReservations {
-    reservationType?: ReservationType;
-    bloodType?: BloodType;
-    reservationStatus?: ReservationStatus;
-    reservationDate?: string;
-
-}
-
-interface GetReservationsProps {
-    filter?: FilterReservations;
-    sort?: SortReservationsBy,
-    search?: string
-}
-
-interface ReservationStore {
-    reservations: Reservation[];
-    getReservations: (props: GetReservationsProps) => Reservation[]
-    updateReservation: (id: string, updatedFields: Partial<Reservation>) => void;
-}
-
-export const useReservationStore = create(
-    persist<ReservationStore>(
+    export interface Reservation {
+      id: string;
+      name: string;
+      phone: string;
+      bloodType: BloodType;
+      reservationType: ReservationType;
+      reservationStatus: ReservationStatus;
+      reservationDate: Date
+      entryTime: Date | null;
+      treatmentStart: Date | null;
+      treatmentEnd: Date | null;
+      createdAt: Date | null;
+    }
+    
+    interface FilterReservations {
+      reservationType?: ReservationType;
+      bloodType?: BloodType;
+      reservationStatus?: ReservationStatus;
+      reservationDate?: string
+    }
+    
+    interface GetReservationsProps {
+      filter?: FilterReservations;
+      sort?: SortReservationsBy;
+      search?: string;
+    }
+    
+    interface ReservationStore {
+      reservations: Reservation[];
+      getReservations: (props: GetReservationsProps) => Reservation[];
+      updateReservation: (id: string, updatedFields: Partial<Reservation>) => void;
+      getReservation: (id: string) => Reservation | string;
+    }
+    
+    export const useReservationStore = create(
+      persist<ReservationStore>(
         (set, get) => ({
-            reservations: dummyReservations,
-            getReservations: ({ filter, sort, search }) => {
-                console.log(filter , sort , search);
+          reservations: dummyReservations,
+          getReservations: ({ filter, sort, search }) => {
+    
+            const { reservations } = get();
+            let filtered = [...reservations];
+    
+            // Search filter
+            if (search && search.trim() !== '') {
+              const lowerSearch = search.toLowerCase();
+              filtered = filtered.filter(
+                (r) =>
+                  r.name.toLowerCase().includes(lowerSearch) ||
+                  (r.phone && r.phone.includes(lowerSearch))
+              );
+            }
+    
+            // Apply filters
+            if (filter) {
+              if (filter.reservationType) {
+                filtered = filtered.filter((r) => r.reservationType === filter.reservationType);
+              }
+              if (filter.bloodType) {
+                filtered = filtered.filter((r) => r.bloodType === filter.bloodType);
+              }
+              if (filter.reservationStatus) {
+                filtered = filtered.filter((r) => r.reservationStatus === filter.reservationStatus);
+              }
+              if (filter.reservationDate) {
+                const filterDate = new Date(filter.reservationDate)
+                filterDate.setHours(0,0,0,0)
                 
-                const { reservations } = get();
-                let filtered = [...reservations];
-
-                if (search && search.trim() !== '') {
-                    const lowerSearch = search.toLowerCase();
-                    filtered = filtered.filter(r =>
-                        r.name.toLowerCase().includes(lowerSearch) ||
-                        (r.phone && r.phone.includes(lowerSearch))
-                    );
-                }
-                if (filter) {
-                    if (filter.reservationType) {
-                        filtered = filtered.filter(r => r.reservationType === filter.reservationType);
-                    }
-                    if (filter.bloodType) {
-                        filtered = filtered.filter(r => r.bloodType === filter.bloodType);
-                    }
-                    if (filter.reservationStatus) {
-                        filtered = filtered.filter(r => r.reservationStatus === filter.reservationStatus);
-                    }
-                    if (filter.reservationDate) {
-                        filtered = filtered.filter(r => r.reservationDate === filter.reservationDate);
-                    }
-                }
-
-                if (sort) {
-                    filtered.sort((a, b) => {
-                        switch (sort) {
-                            case 'reservation-type':
-                                return a.reservationType.localeCompare(b.reservationType);
-                            case 'blood-type':
-                                return a.bloodType.localeCompare(b.bloodType);
-                            case 'reservation-status':
-                                return a.reservationStatus.localeCompare(b.reservationStatus);
-                            case 'reservation-date':
-                                return a.reservationDate.localeCompare(b.reservationDate);
-                            case 'name':
-                                return a.name.localeCompare(b.reservationDate);
-                            default:
-                                return 0;
-                        }
-                    });
-                }
-
-                return filtered;
-            },
-            updateReservation: (id, updatedFields) => {
-                set((state) => {
-                    const reservation = state.reservations.find(r => r.id === id);
-                    if (!reservation) return state;
-
-                    const oldStatus = reservation.reservationStatus;
-                    const newStatus = updatedFields.reservationStatus;
-
-                    let fieldsToUpdate = { ...updatedFields };
-
-                    if (newStatus && newStatus !== oldStatus) {
-                        const now = new Date();
-                        if (newStatus === 'upcoming') {
-                            fieldsToUpdate.entryTime = null;
-                            fieldsToUpdate.treatmentStart = null;
-                            fieldsToUpdate.treatmentEnd = null;
-                        }
-                        else if (newStatus === 'waiting') {
-
-                            fieldsToUpdate.entryTime = now;
-                            fieldsToUpdate.treatmentStart = null;
-                            fieldsToUpdate.treatmentEnd = null;
-                        } else if (newStatus === 'in-treatment') {
-
-                            fieldsToUpdate.treatmentStart = now;
-                            fieldsToUpdate.treatmentEnd = null;
-
-                        } else if (newStatus === 'completed') {
-
-                            fieldsToUpdate.treatmentEnd = now;
-                        }
-                    }
-                    return {
-                        reservations: state.reservations.map((res) =>
-                            res.id === id ? { ...res, ...fieldsToUpdate } : res
-                        )
-                    };
+                filtered = filtered.filter((r) => {
+                    if (!r.reservationDate) return false;
+                    const resDate = new Date(r.reservationDate);
+                    resDate.setHours(0, 0, 0, 0);
+                  return resDate.getTime() === filterDate.getTime();
                 });
-            },
+              }
+            }
+    
+            // Apply sorting
+            if (sort) {
+              filtered.sort((a, b) => {
+                switch (sort) {
+                  case 'reservation-type':
+                    return a.reservationType.localeCompare(b.reservationType);
+                  case 'blood-type':
+                    return a.bloodType.localeCompare(b.bloodType);
+                  case 'reservation-status':
+                    return a.reservationStatus.localeCompare(b.reservationStatus);
+                  case 'reservation-date':
+                    // Handle null dates: place them at the end
+                    if (!a.reservationDate && !b.reservationDate) return 0;
+                    if (!a.reservationDate) return 1;
+                    if (!b.reservationDate) return -1;
+                    return a.reservationDate.getTime() - b.reservationDate.getTime();
+                  case 'name':
+                    return a.name.localeCompare(b.name); // Fixed: was comparing name to reservationDate
+                  default:
+                    return 0;
+                }
+              });
+            }
+    
+            return filtered;
+          },
+          updateReservation: (id, updatedFields) => {
+            set((state) => {
+              const reservation = state.reservations.find((r) => r.id === id);
+              if (!reservation) return state;
+    
+              const oldStatus = reservation.reservationStatus;
+              const newStatus = updatedFields.reservationStatus;
+    
+              let fieldsToUpdate = { ...updatedFields };
+    
+              if (newStatus && newStatus !== oldStatus) {
+                const now = new Date();
+                if (newStatus === 'upcoming') {
+                  fieldsToUpdate.entryTime = null;
+                  fieldsToUpdate.treatmentStart = null;
+                  fieldsToUpdate.treatmentEnd = null;
+                } else if (newStatus === 'waiting') {
+                  fieldsToUpdate.entryTime = now;
+                  fieldsToUpdate.treatmentStart = null;
+                  fieldsToUpdate.treatmentEnd = null;
+                } else if (newStatus === 'in-treatment') {
+                  fieldsToUpdate.treatmentStart = now;
+                  fieldsToUpdate.treatmentEnd = null;
+                } else if (newStatus === 'completed') {
+                  fieldsToUpdate.treatmentEnd = now;
+                }
+              }
+    
+              return {
+                reservations: state.reservations.map((res) =>
+                  res.id === id ? { ...res, ...fieldsToUpdate } : res
+                ),
+              };
+            });
+          },
+          getReservation(id) {
+            const { reservations } = get();
+            const reservation = reservations.find(r => r.id == id)
+            if(reservation){
+                return reservation
+            }
+            else{
+                return 'not found'
+            }
+          },
         }),
         {
-            name: 'reservations-storage',
+          name: 'reservations-storage',
         }
-    )
-);
+      )
+    );
