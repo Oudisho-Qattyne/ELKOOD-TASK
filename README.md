@@ -48,7 +48,7 @@ A modern reservation management system for dental clinics. Built with **React**,
 | **Layer**          | **Technology**                                    |
 |---------------------|---------------------------------------------------|
 | UI Library          | [React](https://reactjs.org/) (v18)              |
-| Drag & Drop         | [React Beautiful DnD](https://github.com/atlassian/react-beautiful-dnd) |
+| Drag & Drop         | [Dnd Kit](https://dndkit.com/)                   |
 | Styling             | [Tailwind CSS](https://tailwindcss.com/)         |
 | State Management    | [Zustand](https://github.com/pmndrs/zustand)     |
 | Routing             | [React Router](https://reactrouter.com/) (v6)    |
