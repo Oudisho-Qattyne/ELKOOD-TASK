@@ -5,6 +5,8 @@ import { useReservationStore, type ReservationStatus } from '../../store/store';
 import { useEffect, useState } from 'react';
 import Input from '../../components/input';
 import { FaPlus } from 'react-icons/fa';
+import Button from '../../components/button';
+import { useNavigate } from 'react-router';
 
 export default function Dashboard() {
     const filterDate = new Date();
@@ -13,28 +15,25 @@ export default function Dashboard() {
     const filterDay = String(filterDate.getDate()).padStart(2, '0');
     const filterDateStr = `${filterYear}-${filterMonth}-${filterDay}`;
     const [date, setDate] = useState<string>(filterDateStr)
-
+    const navigate = useNavigate()
     const updateReservation = useReservationStore(state => state.updateReservation);
 
     useEffect(() => {
         localStorage.removeItem('reservations-storage')
     }, [])
-
     return (
         <div className='relative w-full'>
             <div className='relative w-full p-5 flex flex-row flex-wrap-reverse justify-between items-center gap-3 '>
                 <div className='relative w-2xs'>
-                    <Input id='date' type='date' onChange={setDate} value={date} />
+                    <Input id='date'  type='date' onChange={setDate} value={date} />
                 </div>
-                <div className='relative w-2xs p-3 flex justify-center items-center gap-2 bg-blue-800 rounded-full hover:bg-blue-900 hover:scale-105 duration-300 cursor-pointer '>
-                    <FaPlus className='relative animate-pulse ' />
-                    <p className='relative select-none '>Add New Reservation</p>
-                </div>
+                <Button onClick={() =>navigate('/add-reservation') } title="Add Reservation" className="w-72 h-10 bg-blue-900 hover:bg-blue-700  py-3" icon={<FaPlus className='relative animate-pulse text-white' />}/>
+
             </div>
             <DndContext onDragEnd={handleDragEnd}  >
                 <div className='relative w-full p-5 flex-wrap grid grid-cols-{3} gap-3'  >
                     {ReservationStatuses.filter(column => column.render).map((column) => (
-                        <KanbanColumn color={column.color} title={column.item as ReservationStatus} date={date} />
+                        <KanbanColumn color={column.color} title={column.item as ReservationStatus} date={date} Icon={column.Icon} />
                     ))}
                 </div>
             </DndContext>

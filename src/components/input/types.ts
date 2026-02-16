@@ -35,9 +35,9 @@ export interface InputProps {
     data?: Item[];
     error?: string;
     validation?: string[];
-    valid?: boolean;
     type: InputType;
     onChange: (v: any) => void;
+    onError?: (error: string | null) => void; 
     className?: string;
     inputClassName?: string;
     name?: string;
@@ -46,4 +46,5 @@ export interface InputProps {
     min?: string; 
     max?: string;   
     step?: number;
+    showTitle?: boolean
 }

@@ -1,11 +1,11 @@
-import React, { type ChangeEvent } from 'react';
+import React, { useEffect, type ChangeEvent } from 'react';
 import { type InputProps } from './types';
 import { useValidation } from './validation';
 import { BaseInput } from './BaseInput';
 
 export const CheckboxInput: React.FC<InputProps> = (props) => {
-  const { value, onChange, validation, type, title, data, className, inputClassName, ...rest } = props;
-  const { error, setDirty } = useValidation(value, validation, type);
+  const { value, onChange, validation, type, title, data, className, inputClassName,onError, ...rest } = props;
+  const { error } = useValidation(value, validation, type);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!data) {
@@ -23,7 +23,11 @@ export const CheckboxInput: React.FC<InputProps> = (props) => {
     onChange(newValue);
   };
 
-  const handleBlur = () => setDirty();
+  useEffect(() => {
+    onError?.(error);
+  }, [error, onError]);
+
+
 
   if (data && data.length) {
     return (
@@ -36,7 +40,6 @@ export const CheckboxInput: React.FC<InputProps> = (props) => {
                 value={item.value}
                 checked={Array.isArray(value) && value.includes(item.value)}
                 onChange={handleChange}
-                onBlur={handleBlur}
                 className={`rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition duration-150 ease-in-out ${inputClassName}`}
                 {...rest}
                 
@@ -57,7 +60,6 @@ export const CheckboxInput: React.FC<InputProps> = (props) => {
           type="checkbox"
           checked={!!value}
           onChange={handleChange}
-          onBlur={handleBlur}
           className={`rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition duration-150 ease-in-out ${inputClassName}`}
           {...rest}
         />

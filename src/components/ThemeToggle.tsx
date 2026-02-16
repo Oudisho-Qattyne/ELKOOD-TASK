@@ -17,7 +17,7 @@ function ThemeToggle() {
       onClick={toggleTheme}
       className="p-2 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 cursor-pointer"
     >
-      {theme === 'light' ? <MdDarkMode /> : <MdLightMode />}
+      {theme === 'light' ? <MdDarkMode className='animate-pulse'/> : <MdLightMode className='animate-pulse'/>}
     </button>
   );
 }

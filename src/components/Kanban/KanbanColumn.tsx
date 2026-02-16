@@ -13,21 +13,21 @@ import Input from "../input";
 interface KanbanColumnProps {
     title: ReservationStatus;
     color: string;
-    date:string;
-
+    date: string;
+    Icon: any
 }
 
-interface Item {
-    id:string,
-    item:any,
-    value:any
-}
+// interface Item {
+//     id:string,
+//     item:any,
+//     value:any
+// }
 
-export default function KanbanColumn({ title, color = '#3d444d' , date }: KanbanColumnProps) {
-    const [search , setSearch] = useState<string>("")
-    const [sort , setSort] = useState<Item>()
-    const [bloodType , setBloodType] = useState<Item>()
-    const [reservationType, setReservationType] = useState<Item>()
+export default function KanbanColumn({ title, color = '#3d444d', date, Icon }: KanbanColumnProps) {
+    const [search, setSearch] = useState<string>("")
+    const [sort, setSort] = useState<string>()
+    const [bloodType, setBloodType] = useState<string>()
+    const [reservationType, setReservationType] = useState<string>()
     const [localeservation, setLocalReservation] = useState<Reservation[]>([])
     const getReservations = useReservationStore(state => state.getReservations);
     const reservations = useReservationStore(state => state.reservations);
@@ -40,37 +40,37 @@ export default function KanbanColumn({ title, color = '#3d444d' , date }: Kanban
 
     const filterData = [
         {
-            id:'1',
-            title:"Blood Type",
-            value:bloodType,
-            onChange : setBloodType,
-            data:BloodTypes,
-            icon:MdBloodtype
+            id: '1',
+            title: "Blood Type",
+            value: bloodType,
+            onChange: setBloodType,
+            data: BloodTypes,
+            icon: MdBloodtype
         },
         {
-            id:'2',
-            title:"Reservation Type",
-            value:reservationType,
-            onChange : setReservationType,
-            data:ReservationTypes,
-            icon:CiBookmarkCheck 
+            id: '2',
+            title: "Reservation Type",
+            value: reservationType,
+            onChange: setReservationType,
+            data: ReservationTypes,
+            icon: CiBookmarkCheck
         }
     ]
-    
+
 
     useEffect(() => {
         setLocalReservation(getReservations({
             filter: {
                 reservationStatus: title,
-                bloodType:bloodType?.value,
-                reservationType:reservationType?.value,
-                reservationDate:date
+                bloodType: bloodType,
+                reservationType: reservationType,
+                reservationDate: date
             },
-            sort:sort?.item,
-            search:search
+            sort: sort,
+            search: search
         }))
-    }, [reservations , search , sort , bloodType , reservationType , date])
- 
+    }, [reservations, search, sort, bloodType, reservationType, date])
+
 
     return (
         <div ref={setNodeRef} className="relative w-full border-2 border-custom-gray-border rounded-lg" style={{ borderColor: color, ...style }}>
@@ -84,17 +84,20 @@ export default function KanbanColumn({ title, color = '#3d444d' , date }: Kanban
                     </p>
                 </div>
             }
-            <div className="relative w-full bg-leight dark:bg-custom-gray rounded-lg rounded-b-none">
+            <div className="relative w-full bg-leight dark:bg-custom-gray rounded-lg rounded-b-none border-b-2" style={{ borderColor: color }}>
 
                 <div className="relative w-full flex flex-col justify-center p-2 gap-3">
-                    <p className="relative text-center capitalize font-bold text-xl" style={{ color: color }}>{title.replace('-', ' ')}</p>
+                    <div className="relative w-full flex justify-center items-center gap-3">
+                       <Icon className="relative font-bold text-xl" style={{color:color}}/>
+                        <p className="relative text-center capitalize font-bold text-xl" style={{ color: color }}>{title.replace('-', ' ')}</p>
+                    </div>
                     <div className="relative w-full flex flex-col  gap-3 ">
                         <input onChange={e => setSearch(e.target.value)} className='relative w-full p-2 border border-custom-gray-hover rounded-lg' type="search" placeholder="search" />
                         <div className="relative w-full flex flex-row flex-wrap gap-3">
-                        <Input id="select" type="select" icon={FaSortAmountDown } value={sort} onChange={setSort} data={ReservationSortFieldsKanban} title="sort" />
-                        {filterData.map(f => <Input type="select" {...f}/>)}
+                            <Input id="select" type="select" icon={FaSortAmountDown} value={sort} onChange={setSort} data={ReservationSortFieldsKanban} title="sort" />
+                            {filterData.map(f => <Input type="select" {...f} />)}
                         </div>
-                        
+
                     </div>
 
                 </div>

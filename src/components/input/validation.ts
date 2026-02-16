@@ -81,12 +81,10 @@ export function useValidation(
   value: any,
   rules: string[] = [],
   type: string
-): { error: string | null; valid: boolean; setDirty: () => void } {
-  const [dirty, setDirty] = useState(false);
+): { error: string | null; valid: boolean;  } {
   const [error, setError] = useState<string | null>(null);
     type    
   useEffect(() => {
-    if (!dirty) return;
     const validators = createValidator(rules);
     for (const validate of validators) {
       const err = validate(value);
@@ -96,11 +94,10 @@ export function useValidation(
       }
     }
     setError(null);
-  }, [value, rules, dirty]);
+  }, [value, rules]);
 
   return {
     error,
     valid: !error,
-    setDirty: () => setDirty(true),
   };
 }
